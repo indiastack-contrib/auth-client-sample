@@ -24,49 +24,27 @@
  ******************************************************************************/
 package in.gov.uidai.auth.aua.httpclient;
 
+import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.WebResource;
 import in.gov.uidai.auth.aua.helper.DigitalSigner;
-import in.gov.uidai.auth.device.model.AuthResponseDetails;
-import in.gov.uidai.auth.device.model.BfdResponseDetails;
 import in.gov.uidai.auth.device.model.OtpResponseDetails;
 import in.gov.uidai.authentication.otp._1.Otp;
 import in.gov.uidai.authentication.otp._1.OtpRes;
-import in.gov.uidai.authentication.uid_auth_request._1.Auth;
-import in.gov.uidai.authentication.uid_auth_response._1.AuthRes;
-import in.gov.uidai.authentication.uid_bfd_request._1.Bfd;
-import in.gov.uidai.authentication.uid_bfd_response._1.BfdRes;
+import org.apache.commons.lang.StringUtils;
+import org.xml.sax.InputSource;
+import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.XMLReaderFactory;
 
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.net.InetAddress;
-import java.net.URI;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
-
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSession;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.namespace.QName;
 import javax.xml.transform.sax.SAXSource;
-
-import org.apache.commons.lang.StringUtils;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
-import org.xml.sax.helpers.XMLReaderFactory;
-
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.api.client.config.ClientConfig;
-import com.sun.jersey.api.client.config.DefaultClientConfig;
-import com.sun.jersey.client.urlconnection.HTTPSProperties;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.net.InetAddress;
+import java.net.URI;
 
 /**
  * <code>OtpClient</code> class can be used for submitting an OTP Generation request to
@@ -89,7 +67,7 @@ public class OtpClient {
 	public OtpResponseDetails generateOtp(Otp otp) {
 		try {
 			String signedXML = generateSignedOtpXML(otp);
-			System.out.println(signedXML);
+			System.out.println("SignedXML: " + signedXML);
 
 			String uriString = otpServerURI.toString() + (otpServerURI.toString().endsWith("/") ? "" : "/")
 					+ otp.getAc() + "/" + otp.getUid().charAt(0) + "/" + otp.getUid().charAt(1);
@@ -97,15 +75,21 @@ public class OtpClient {
 			if (StringUtils.isNotBlank(asaLicenseKey)) {
 				uriString  = uriString + "/" + asaLicenseKey;
 			}
-			
+
+
+			System.out.println("URL: " + uriString);
+
 			URI otpURI = new URI(uriString);
 
 			WebResource webResource = Client.create(HttpClientHelper.getClientConfig(otpServerURI.getScheme())).resource(otpURI);
 
 			String responseXML = webResource.header("REMOTE_ADDR", InetAddress.getLocalHost().getHostAddress()).post(String.class,
 					signedXML);
-			
-			
+
+			System.out.println("Response: " + responseXML);
+
+			System.out.println("======================================================================================");
+
 			return new OtpResponseDetails(responseXML, parseOtpResponseXML(responseXML));
 			
 		} catch (Exception e) {

@@ -70,7 +70,8 @@ import java.util.logging.Logger;
 
 public class SampleClientMainFrame extends javax.swing.JFrame {
 
-	private static Map<String, Font> languageToFontMap = new HashMap<String, Font>();
+    public static final String AUTHCLIENT_PROPERTIES = "/Users/selva/Downloads/uidai-auth-client-1.6-src/uidai-sample-gui-app/authclient.properties";
+    private static Map<String, Font> languageToFontMap = new HashMap<String, Font>();
 	public static Map<String, byte[]> skeyMap = new HashMap<String, byte[]>();
 
 	static {
@@ -594,7 +595,7 @@ public class SampleClientMainFrame extends javax.swing.JFrame {
 
         jLabelTerminalID1.setText("Signature file");
 
-        jTextFieldSignatureFile.setText("public");
+        jTextFieldSignatureFile.setText("/Users/selva/Downloads/uidai-auth-client-1.6-src/uidai-sample-gui-app/public-may2012.p12");
         jTextFieldSignatureFile.setToolTipText("Path to AUA's .p12 file which can be used for signing the auth requests.");
 
         jButtonPickPublicKeyFile1.setText("Browse");
@@ -2713,7 +2714,7 @@ public class SampleClientMainFrame extends javax.swing.JFrame {
 	private void loadPreferences() {
 		FileInputStream is = null;
 		try {
-			File preferencesFile = new File("authclient.properties");
+			File preferencesFile = new File(AUTHCLIENT_PROPERTIES);
 			if (preferencesFile.exists()) {
 				is = new FileInputStream(preferencesFile);
 				Properties p = new Properties();
@@ -2872,7 +2873,7 @@ public class SampleClientMainFrame extends javax.swing.JFrame {
 
 			Properties p = new Properties();
 
-			File preferencesFile = new File("authclient.properties");
+			File preferencesFile = new File(AUTHCLIENT_PROPERTIES);
 			if (preferencesFile.exists()) {
 				is = new FileInputStream(preferencesFile);
 				p.load(is);
@@ -2934,7 +2935,7 @@ public class SampleClientMainFrame extends javax.swing.JFrame {
 			
 			p.put("pincode", jTextFieldLocationValue.getText());
 
-			File f = new File("authclient.properties");
+			File f = new File(AUTHCLIENT_PROPERTIES);
 			of = new FileOutputStream(f);
 			p.store(of, "Auth client preferences");
 
@@ -2999,7 +3000,7 @@ public class SampleClientMainFrame extends javax.swing.JFrame {
 	}// GEN-LAST:event_jRadioButtonPfaPartialMatchActionPerformed
 
 	private void formWindowOpened(java.awt.event.WindowEvent evt) {// GEN-FIRST:event_formWindowOpened
-		File preferencesFile = new File("authclient.properties");
+		File preferencesFile = new File(AUTHCLIENT_PROPERTIES);
 		if (!preferencesFile.exists()) {
 			JOptionPane.showMessageDialog(this,
 					"Default preferences are being used.\nEdit your preferences and and save it by using menu option Edit->Preferences",
